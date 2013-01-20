@@ -1,25 +1,36 @@
-# coding: UTF-8
+# encoding:UTF-8
 
 require 'rubygems'
 require 'sinatra'
 require 'haml'
 require 'sass'
-
+require 'amazon_product'
 
 configure do
   set :haml, { :format => :html5 }
-  # -- basic 認証 --
-  set :username, 'username'
-  set :token, '123456789'
-  set :password, 'password'
+end
+
+def amazon_product (amazonId)
+  req = AmazonProduct["jp"]
+  req.configure do |c|
+    c.key    =
+    c.secret =
+    c.tag    =
+  end
+  req << {
+    :operation    => 'ItemLookup',
+    :ItemId       => amazonId ,
+    :response_group => %w{ItemAttributes Images},
+  }
+  res = req.get
+  @item = res.find('Item')
+  return @item
 end
 
 helpers do
   include Rack::Utils
   alias_method :h, :escape_html
   alias_method :u, :escape
-  # Example
-  # = h scary_output
 
   def nl2br(str)
     str = html_escape(str)
@@ -28,6 +39,14 @@ helpers do
 end
 
 get '/' do
+  @item = ""
+  @msg = "amazonId(ISDN or ASIN)"
+  haml :index
+end
+
+post '/' do
+  amazon_product (params[:amazonId])
+  @msg = "No Product"
   haml :index
 end
 
