@@ -1,24 +1,43 @@
-!!! 5
-%html{:lang => "en"}
-  %head
-    %meta{:charset => "UTF-8"}
-    %title
-  %body
-    %form{:action => '/', :method => 'POST'}
-      %input{ :type => "text", :name => 'amazonId'}/
-      %button
-        Submit
-    - unless @item == ""
-      - @item.each do |item|
-        %ul
-          %li
+.container
+  %form.form-inline{:action => '/', :method => 'POST'}
+    %input{ :type => "text", :name => 'amazonId'}/
+    %button.btn
+      Submit
+  - unless @item == ""
+    - @item.each do |item|
+      .row
+        .span4
+          %a{ :href => "#{item['DetailPageURL']}" }
+            %img.img-polaroid{ :src => "#{item['MediumImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}" }/
+        .span8
+          %h3
             %a{ :href => "#{item['DetailPageURL']}" }
               #{item['ItemAttributes']['Title']}
-          %li
-            %a{ :href => "#{item['DetailPageURL']}" }
-              %img{ :src => "#{item['MediumImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}" }/
-        %hr/
-    - else
-      %p
-        = @msg
+      %form.row{:style => 'margin-left: 0;'}
+        %fieldset
+          %legend
+            TITLE
+          %label{ :for => "" }
+            HTML
+          %textarea.span12{ :id => "", :name => "", :rows => "5"}
+            <a href="#{item['DetailPageURL']}">#{item['ItemAttributes']['Title']}</a>
+          %label{ :for => "" }
+            Markdown
+          %textarea.span12{ :id => "", :name => "", :rows => "5"}
+            [#{item['ItemAttributes']['Title']}](#{item['DetailPageURL']})
+        %fieldset
+          %legend
+            IMAGE
+          %label{ :for => "" }
+            HTML
+          %textarea.span12{ :id => "", :name => "", :rows => "5"}
+            <a href="#{item['DetailPageURL']}"><img src="#{item['MediumImage']['URL']}" alt="#{item['ItemAttributes']['Title']}"/></a>
+          %label{ :for => "" }
+            Markdown
+          %textarea.span12{ :id => "", :name => "", :rows => "5"}
+            [![#{item['ItemAttributes']['Title']}](#{item['MediumImage']['URL']})](#{item['DetailPageURL']})
+      %hr/
+  - else
+    %p
+      = @msg
 

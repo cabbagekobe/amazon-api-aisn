@@ -13,9 +13,12 @@ end
 def amazon_product (amazonId)
   req = AmazonProduct["jp"]
   req.configure do |c|
-    c.key    =
-    c.secret =
-    c.tag    =
+    c.key      = ENV['AMAZON_API_KEY']
+    c.secret   = ENV['AMAZON_API_SECRET']
+    c.tag      = ENV['AMAZON_API_TAG']
+    c.cache    = false
+    c.locale   = 'jp'
+    c.encoding = 'UTF-8'
   end
   req << {
     :operation    => 'ItemLookup',
