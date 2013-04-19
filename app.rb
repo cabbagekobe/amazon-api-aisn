@@ -4,6 +4,7 @@ require 'rubygems'
 require 'sinatra'
 require 'haml'
 require 'sass'
+require 'pp'
 require 'amazon_product'
 
 configure do
@@ -20,7 +21,25 @@ def amazon_product (amazonId)
   req << {
     :operation    => 'ItemLookup',
     :ItemId       => amazonId ,
-    :response_group => %w{ItemAttributes Images},
+    :response_group => %w{Medium},
+  }
+  res = req.get
+  @item = res.find('Item')
+  return @item
+end
+
+def amazon_search (word)
+  req = AmazonProduct["jp"]
+  req.configure do |c|
+    c.key      = ENV['AMAZON_API_KEY']
+    c.secret   = ENV['AMAZON_API_SECRET']
+    c.tag      = ENV['AMAZON_API_TAG']
+  end
+  req << {
+    :operation    => 'ItemSearch',
+    :search_index => "All",
+    :response_group => %w{Medium},
+    :keywords => word,
   }
   res = req.get
   @item = res.find('Item')
@@ -31,11 +50,6 @@ helpers do
   include Rack::Utils
   alias_method :h, :escape_html
   alias_method :u, :escape
-
-  def nl2br(str)
-    str = html_escape(str)
-    str.gsub(/\r\n|\r|\n/, "<br />")
-  end
 end
 
 get '/' do
@@ -46,6 +60,18 @@ end
 
 post '/' do
   amazon_product (params[:amazonId])
+  @msg = "No Product"
+  haml :index
+end
+
+post '/search' do
+  amazon_search (params[:search])
+  @msg = "No Product"
+  haml :index
+end
+
+get '/search/*' do |keyword|
+  amazon_search (keyword)
   @msg = "No Product"
   haml :index
 end

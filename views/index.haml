@@ -1,14 +1,20 @@
 .container
+  %form.form-inline{:action => '/search', :method => 'POST'}
+    %input{ :type => "text", :name => 'search', :placeholder => '検索'}/
+    %button.btn
+      Search
   %form.form-inline{:action => '/', :method => 'POST'}
-    %input{ :type => "text", :name => 'amazonId'}/
+    %input{ :type => "text", :name => 'amazonId', :placeholder => 'ISBN番号'}/
     %button.btn
       Submit
   - unless @item == ""
-    - @item.each do |item|
+    - @item.each_with_index do |item, i|
       .row
         .span4
-          %a{ :href => "#{item['DetailPageURL']}" }
-            %img.img-polaroid{ :src => "#{item['MediumImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}" }/
+          - if item['LargeImage']
+            %img.img-polaroid{ :src => "#{item['LargeImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}" }/
+          - else
+            画像なし
         .span8
           %h3
             %a{ :href => "#{item['DetailPageURL']}" }
@@ -19,23 +25,30 @@
             TITLE
           %label{ :for => "" }
             HTML
-          %textarea.span12{ :id => "", :name => "", :rows => "5"}
+          %textarea.span12{ :id => "", :name => "", :rows => "3"}
             <a href="#{item['DetailPageURL']}">#{item['ItemAttributes']['Title']}</a>
-          %label{ :for => "" }
-            Markdown
-          %textarea.span12{ :id => "", :name => "", :rows => "5"}
-            [#{item['ItemAttributes']['Title']}](#{item['DetailPageURL']})
-        %fieldset
-          %legend
-            IMAGE
-          %label{ :for => "" }
-            HTML
-          %textarea.span12{ :id => "", :name => "", :rows => "5"}
-            <a href="#{item['DetailPageURL']}"><img src="#{item['MediumImage']['URL']}" alt="#{item['ItemAttributes']['Title']}"/></a>
-          %label{ :for => "" }
-            Markdown
-          %textarea.span12{ :id => "", :name => "", :rows => "5"}
-            [![#{item['ItemAttributes']['Title']}](#{item['MediumImage']['URL']})](#{item['DetailPageURL']})
+        - if item['LargeImage']
+          %fieldset
+            %legend
+              LARGE IMAGE
+            %label{ :for => "" }
+              HTML
+            %textarea.span12{ :id => "", :name => "", :rows => "3"}
+              <a href="#{item['DetailPageURL']}" target="_blank"><img src="#{item['LargeImage']['URL']}" alt="#{item['ItemAttributes']['Title']}"/></a>
+          %fieldset
+            %legend
+              MIDIUM IMAGE
+            %label{ :for => "" }
+              HTML
+            %textarea.span12{ :id => "", :name => "", :rows => "3"}
+              <a href="#{item['DetailPageURL']}" target="_blank"><img src="#{item['MediumImage']['URL']}" alt="#{item['ItemAttributes']['Title']}"/></a>
+          %fieldset
+            %legend
+              SMALL IMAGE
+            %label{ :for => "" }
+              HTML
+            %textarea.span12{ :id => "", :name => "", :rows => "3"}
+              <a href="#{item['DetailPageURL']}" target="_blank"><img src="#{item['SmallImage']['URL']}" alt="#{item['ItemAttributes']['Title']}"/></a>
       %hr/
   - else
     %p
