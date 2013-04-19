@@ -11,11 +11,11 @@
     %h4 アイテム一覧
     %ul.thumbnails
       - @item.each_with_index do |item, i|
-        %li.span2
+        %li.span2{:style => 'height:120px;' }
           %a{ :href => "#item#{i}" }
             %div.thumbnail
               - if item['LargeImage']
-                %img.img-polaroid{ :src => "#{item['SmallImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}", :style => 'margin: 10px auto;' }/
+                %img.img-polaroid{ :src => "#{item['SmallImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}", :style => 'margin: 10px auto; max-height:100px;' }/
               - else
                 画像なし
   - unless @item == ""
