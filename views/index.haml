@@ -8,8 +8,19 @@
     %button.btn
       Submit
   - unless @item == ""
+    %h4 アイテム一覧
+    %ul.thumbnails
+      - @item.each_with_index do |item, i|
+        %li.span2
+          %a{ :href => "#item#{i}" }
+            %div.thumbnail
+              - if item['LargeImage']
+                %img.img-polaroid{ :src => "#{item['SmallImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}", :style => 'margin: 10px auto;' }/
+              - else
+                画像なし
+  - unless @item == ""
     - @item.each_with_index do |item, i|
-      .row
+      %div.row{:id => "item#{i}", :style => "padding-top:60px;"}
         .span4
           - if item['LargeImage']
             %img.img-polaroid{ :src => "#{item['LargeImage']['URL']}", :alt => "#{item['ItemAttributes']['Title']}" }/
